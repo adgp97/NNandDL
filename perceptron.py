@@ -66,11 +66,11 @@ class Perceptron:
 		FN = np.where(self.output < 0.5, self.output, 0) * check_data_TF
 		FN = len(FN[FN > 0])
 
-		print(f'TPs: {TP} FPs: {FP} FNs: {FN} TNs: {TN}')
+		print('TPs: {:^3} FPs: {:^3} FNs: {:^3} TNs: {:^3}'.format(TP, FP, FN, TN), end = ' | ')
 
 		accuracy = (TP + TN) / data_samples
 		precision = TP / (TP + TN)
 		recall = TP / (TP + FN)
 		F1 = (2 * precision * recall) / (precision + recall)
 
-		print(f'Exactitud: {accuracy}. Precision: {precision}. Recall: {recall}. F1: {F1}')
+		print('Exactitud: {:.2E}. Precision: {:.2E}. Recall: {:.2E}. F1: {:.2E}'.format(accuracy, precision, recall, F1))

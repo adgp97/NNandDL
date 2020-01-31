@@ -26,8 +26,10 @@ for i in range(epoch_mum):
 
 # Print results
 print("\nEntrada   |   Salida")
-for i in range(data_samples):
-	print('  {}       {:.2E}'.format(dataset_x[i], p.output[i]))
+print('  {}       {:.2E}'.format(dataset_x[0], p.output[0]))
+print('  {}       {:.2E}'.format(dataset_x[1], p.output[1]))
+print('  {}       {:.2E}'.format(dataset_x[2], p.output[2]))
+print('  {}       {:.2E}'.format(dataset_x[3], p.output[3]))
 
 # Plot Cost Function vs Epoch
 plt.plot(np.asarray(range(epoch_mum))-1, cost)

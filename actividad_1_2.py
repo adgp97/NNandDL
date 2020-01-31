@@ -20,7 +20,7 @@ cost = []
 
 for i in range(epoch_mum):
 
-	print('Traning epoch: ', i)
+	print('Epoch: {:^3}'.format(i), end = ' | ')
 
 	p.feed(train_set_x, train_set_y)
 	p.grad_desc(train_set_x, train_set_y)
@@ -28,7 +28,7 @@ for i in range(epoch_mum):
 	p.print_metrics(train_set_y, data_samples)
 	cost.append(p.cost)
 
-print('Ultimo valor de la Funcion de Costo: ', cost[epoch_mum - 1])
+print('Ultimo valor de la Funcion de Costo: {:.2E}'.format(cost[epoch_mum - 1]))
 plt.plot(np.asarray(range(epoch_mum))-1, cost)
 plt.title('A1_2. Cost Function vs Epoch')
 plt.xlabel('Epoch')
