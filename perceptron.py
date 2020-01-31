@@ -21,7 +21,7 @@ class Perceptron:
 		self.input_size = input_size
 		self.learning_rate = learning_rate
 
-		self.weights = np.random.uniform(low = -0.5, high = 0.5, size = self.input_size)
+		self.weights = np.random.uniform(low = -1, high = 1, size = self.input_size)
 		self.bias = np.random.uniform(low = -1, high = 1, size = 1)
 
 # Data es un arreglo cuyo numero de columnas es el numero de entradas
@@ -49,3 +49,31 @@ class Perceptron:
 		"""
 		self.weights -= self.learning_rate * self.dw
 		self.bias -= self.learning_rate * self.db
+
+	def print_metrics(self, check_data, data_samples):
+		"""
+		Metrics calculation and printing
+		"""
+		# preguntar si esto se calcula luego de pasar la data por la red pero antes de la retropropagacion
+		check_data_TF = check_data_TF = np.where(check_data > 0, True, False)
+
+		TP = np.where(self.output >= 0.5, self.output, 0) * check_data_TF
+		TP = len(TP[TP > 0])
+
+		FP = np.where(self.output >= 0.5, self.output, 0) * ~check_data_TF
+		FP = len(FP[FP > 0])
+
+		TN = np.where(self.output < 0.5, self.output, 0) * ~check_data_TF
+		TN = len(TN[TN > 0])
+
+		FN = np.where(self.output < 0.5, self.output, 0) * check_data_TF
+		FN = len(FN[FN > 0])
+
+		print(f'TPs: {TP} FPs: {FP} FNs: {FN} TNs: {TN}')
+
+		accuracy = (TP + TN) / data_samples
+		precision = TP / (TP + TN)
+		recall = TP / (TP + FN)
+		F1 = (2 * precision * recall) / (precision + recall)
+
+		print(f'Exactitud: {accuracy}. Precision: {precision}. Recall: {recall}. F1: {F1}')
