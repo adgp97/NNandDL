@@ -24,8 +24,6 @@ class Perceptron:
 		self.weights = np.random.uniform(low = -1, high = 1, size = self.input_size)
 		self.bias = np.random.uniform(low = -1, high = 1, size = 1)
 
-# Data es un arreglo cuyo numero de columnas es el numero de entradas
-# del perceptron y el numero de filas es el numero de muestras
 	def feed(self, data, check_data):
 		"""
 		Feed data to Perceptron. Calculate the estimated output and Cost function
@@ -54,7 +52,6 @@ class Perceptron:
 		"""
 		Metrics calculation and printing
 		"""
-		# preguntar si esto se calcula luego de pasar la data por la red pero antes de la retropropagacion
 		check_data_TF = check_data_TF = np.where(check_data > 0, True, False)
 
 		TP = np.where(self.output >= 0.5, self.output, 0) * check_data_TF

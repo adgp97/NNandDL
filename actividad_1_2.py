@@ -30,6 +30,8 @@ for i in range(epoch_mum):
 
 print('Ultimo valor de la Funcion de Costo: ', cost[epoch_mum - 1])
 plt.plot(np.asarray(range(epoch_mum))-1, cost)
+plt.title('A1_2. Cost Function vs Epoch')
 plt.xlabel('Epoch')
 plt.ylabel('Cost function')
+plt.grid()
 plt.show()
