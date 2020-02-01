@@ -1,15 +1,3 @@
-# __init__: constructor.
-# Parametros: numero de entradas, learning rate(?), numero de epocas(?)
-# Funciones: inicializacion aleatoria de los pesos y del bias 
-
-# feedforward: evaluar 
-# Parametros: pesos, bias, entrada
-# Funciones: multiplicar entradas por pesos y sumar, sumar bias, evaluar la funcion de activacion
-
-# backpropagation: ajustar parametros
-# Parametros: pesos, bias, learning rate
-# Funciones: calcular el gradiente, actualizar los pesos y el bias
-
 import numpy as np
 
 class Perceptron:
