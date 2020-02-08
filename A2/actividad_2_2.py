@@ -36,16 +36,18 @@ for learning_rate in learning_rate_array:
 	for i in range(curr_epoch):
 		p[case].forward(train_X_tensor, train_Y_tensor)
 		p[case].back_prop()
-		print('Epoch: {}  Cost: {:.5f}'.format(i, p[case].cost))
+		# print('Epoch: {}  Cost: {:.5f}'.format(i, p[case].cost))
 		cost[case][i] = p[case].cost
 	
 	case+=1
 
 
 # Plot the 3 first learning rates (0.0001, 0.0005, 0.001)
-plt.plot(range(epoch_num), cost[0], range(epoch_num), cost[1], range(epoch_num), cost[2], label='LR = '+str(learning_rate_array))
-plt.axis([0,epoch_num, 0, 2000])
+plt.plot(range(epoch_num), cost[0], label = 'LR = '+str(learning_rate_array[0])) 
+plt.plot(range(epoch_num), cost[1], label = 'LR = '+str(learning_rate_array[1]))
+plt.plot(range(epoch_num), cost[2], label = 'LR = '+str(learning_rate_array[2]))
 plt.legend()
+plt.axis([0,epoch_num, 0, 175000])
 plt.title('A2_2. Cost Function vs Epoch')
 plt.xlabel('Epoch')
 plt.ylabel('Cost function')
@@ -54,7 +56,6 @@ plt.show()
 
 # Plot the cost with learning rate = 1.25
 plt.plot(range(epoch_num), cost[3], label='LR = '+str(learning_rate_array[3]))
-plt.axis([0,epoch_num, 0, 2000])
 plt.legend()
 plt.title('A2_2. Cost Function vs Epoch')
 plt.xlabel('Epoch')
