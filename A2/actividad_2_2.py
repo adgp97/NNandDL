@@ -12,29 +12,50 @@ input_size = train_X.shape[1]
 output_size = 1
 data_samples = train_X.shape[0]
 
-epoch_mum = 10
-learning_rate_array = (0.0001, 0.0005, 0.001)
-learning_rate = 0.5
+# Training parameters
+epoch_num = 5000
+epoch_num_custom = 10
+learning_rate_array = (0.0001, 0.0005, 0.001, 1.25, 0.5)
 
-# Big For. Uncomment to run with learning_rate_array (first part of a2_2)
-# for learning_rate in learning_rate_array:
+case = 0
+p = {}
+cost = np.zeros((len(learning_rate_array), epoch_num))
+curr_epoch = epoch_num
 
-p = Perceptron(input_size, output_size, learning_rate, mode = 2)
+# Big For
+for learning_rate in learning_rate_array:
+	print('***** Training with Learning rate: {} *****'.format(learning_rate))
 
-cost = []
+	p[case] = Perceptron(input_size, output_size, learning_rate, mode = 2)
 
-# Training
-for i in range(epoch_mum):
-	p.forward(train_X_tensor, train_Y_tensor)
-	p.back_prop()
-	print('Epoch: {}  Cost: {:.5f}'.format(i, p.cost))
-	cost.append(p.cost)
+	# Update current number of epoch
+	if case == 4:
+		curr_epoch = epoch_num_custom
 
-# End of Big For
+	# Training
+	for i in range(curr_epoch):
+		p[case].forward(train_X_tensor, train_Y_tensor)
+		p[case].back_prop()
+		print('Epoch: {}  Cost: {:.5f}'.format(i, p[case].cost))
+		cost[case][i] = p[case].cost
+	
+	case+=1
 
-plt.plot(range(epoch_mum),cost, label='LR = '+str(learning_rate))
-plt.axis([0,epoch_mum, 0, 2000])
-plt.legend();
+
+# Plot the 3 first learning rates (0.0001, 0.0005, 0.001)
+plt.plot(range(epoch_num), cost[0], range(epoch_num), cost[1], range(epoch_num), cost[2], label='LR = '+str(learning_rate_array))
+plt.axis([0,epoch_num, 0, 2000])
+plt.legend()
+plt.title('A2_2. Cost Function vs Epoch')
+plt.xlabel('Epoch')
+plt.ylabel('Cost function')
+plt.grid()
+plt.show()
+
+# Plot the cost with learning rate = 1.25
+plt.plot(range(epoch_num), cost[3], label='LR = '+str(learning_rate_array[3]))
+plt.axis([0,epoch_num, 0, 2000])
+plt.legend()
 plt.title('A2_2. Cost Function vs Epoch')
 plt.xlabel('Epoch')
 plt.ylabel('Cost function')
@@ -42,10 +63,11 @@ plt.grid()
 plt.show()
 
 
+# Plot Linear Regression with the custom training
 x = np.asarray([min(train_X) - 1, max(train_X) + 1])
 
 plt.plot(train_X, train_Y,'.')
-plt.plot(x, p.layer.weight.item()*x + p.layer.bias.item())
+plt.plot(x, p[4].layer.weight.item()*x + p[4].layer.bias.item())
 plt.title('A2_2. Result of Linear Regression')
 plt.xlabel('X axis')
 plt.ylabel('Y axis')
