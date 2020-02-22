@@ -20,7 +20,7 @@ def shuffle_dataset(file_name):
 
 	ds = np.genfromtxt(file_name, delimiter = ',', dtype=str)
 	np.random.shuffle(ds)
-	np.savetxt('shuffle_' + file_name, ds, delimiter = ',', fmt='%s')
+	np.savetxt('shuffled_' + file_name, ds, delimiter = ',', fmt='%s')
 
 def load_shuffled_dataset(file_name, batch_size_arr):
 
@@ -31,7 +31,9 @@ def load_shuffled_dataset(file_name, batch_size_arr):
 	test_set_len = ds.__len__() - train_set_len - val_set_len
 
 	train_set = DataLoader(ds[0:train_set_len], batch_size = batch_size_arr[0], shuffle = False)
-	val_set = DataLoader(ds[train_set_len : train_set_len + val_set_len], batch_size = batch_size_arr[1], shuffle = False)
-	test_set = DataLoader(ds[train_set_len + val_set_len:], batch_size = batch_size_arr[2], shuffle = False)
+	# val_set = DataLoader(ds[train_set_len : train_set_len + val_set_len], batch_size = batch_size_arr[1], shuffle = False)
+	# test_set = DataLoader(ds[train_set_len + val_set_len:], batch_size = batch_size_arr[2], shuffle = False)
+	val_set = ds[train_set_len : train_set_len + val_set_len]
+	test_set = ds[train_set_len + val_set_len:]
 	
 	return train_set, val_set, test_set

@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch
 import sys
+import numpy as np
 
 class Net(nn.Module):
 	"""
@@ -58,8 +59,8 @@ class Net(nn.Module):
 				self.output = self.layers[i](self.output)
 
 		if torch.is_tensor(check_data):
-			loss_fn = nn.MSELoss()
-			self.cost = loss_fn(self.output, check_data)
+			loss_fn = nn.BCELoss()
+			self.cost = loss_fn(self.output, check_data.view(len(check_data),1))
 
 
 	def back_prop(self, opt, momentum = 0, weight_decay=0):
@@ -86,3 +87,33 @@ class Net(nn.Module):
 
 		# Update parameters
 		optimizer.step()
+
+	def print_metrics(self, check_data):
+		"""
+		Metrics calculation and printing
+		"""
+		ones_tensor = torch.ones(len(check_data), 1)
+		zeros_tensor = torch.zeros(len(check_data), 1)
+		check_data_TF = torch.where(check_data > 0, ones_tensor, zeros_tensor)[1,:].view(len(check_data),1)
+		check_data_TF_neg = torch.where(check_data > 0, zeros_tensor, ones_tensor)[1,:].view(len(check_data),1)
+
+		TP = torch.where(self.output >= 0.5, self.output, zeros_tensor) * check_data_TF
+		TP = len(TP[TP > 0])
+
+		FP = torch.where(self.output >= 0.5, self.output, zeros_tensor) * check_data_TF_neg
+		FP = len(FP[FP > 0])
+
+		TN = torch.where(self.output < 0.5, self.output, zeros_tensor) * check_data_TF_neg
+		TN = len(TN[TN > 0])
+
+		FN = torch.where(self.output < 0.5, self.output, zeros_tensor) * check_data_TF
+		FN = len(FN[FN > 0])
+
+		print('M: {} | TPs: {:^3} FPs: {:^3} FNs: {:^3} TNs: {:^3}'.format(check_data.shape[0], TP, FP, FN, TN), end = ' | ')
+
+		accuracy = (TP + TN) / check_data_TF.shape[0]
+		precision = TP / (TP + TN)
+		recall = TP / (TP + FN)
+		F1 = (2 * precision * recall) / (precision + recall)
+
+		print('Exactitud: {:.2E}. Precision: {:.2E}. Recall: {:.2E}. F1: {:.2E}'.format(accuracy, precision, recall, F1))
