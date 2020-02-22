@@ -5,7 +5,9 @@ import torch
 import numpy as np
 import utils
 from net import Net
+import os.path
 
+file_name = 'sonar.csv'
 
 epoch_num = 1000
 learning_rate = 0.01
@@ -16,9 +18,11 @@ batch_sizes = [31, 3, 3]
 epoch_to_save = 5000
 path_to_save = 'mymodel'
 
-utils.shuffle_dataset('sonar.csv')
+# Only shuffle the data once
+if not os.path.exists('shuffled_' + file_name):
+    utils.shuffle_dataset('sonar.csv')
 
-train, val, test = utils.load_shuffled_dataset('shuffled_sonar.csv', batch_sizes)
+train, val, test = utils.load_shuffled_dataset('shuffled_' + file_name, batch_sizes)
 
 model_0 = Net(layers, learning_rate)
 
