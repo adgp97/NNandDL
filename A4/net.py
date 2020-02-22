@@ -18,7 +18,7 @@ class Net(nn.Module):
 		Constructor
 		"""
 		super(Net, self).__init__()
-		
+
 		self.learning_rate = learning_rate
 		# self.mode = mode
 		self.layers = nn.ModuleList()
@@ -26,7 +26,7 @@ class Net(nn.Module):
 
 		for i in range(layers.shape[0]):
 
-			self.layers.append(nn.Linear(layers[i][0], layers[i][1]))
+			self.layers.append(nn.Linear(int(layers[i][0]), int(layers[i][1])))
 
 			if layers[i][2] == None:
 				self.act_funcs.append(None)	# No act func
@@ -52,7 +52,7 @@ class Net(nn.Module):
 
 			try:
 				self.output = self.act_funcs[i](self.layers[i](self.output))
-			
+
 			except TypeError:
 				# This should happen when activation function is set to None
 				self.output = self.layers[i](self.output)
@@ -64,14 +64,14 @@ class Net(nn.Module):
 
 	def back_prop(self, opt, momentum = 0, weight_decay=0):
 		"""
-		Correction of weights and bias 
+		Correction of weights and bias
 		"""
 
 		# Declare the optimizer
 		if   opt == 'sgd':
 			optimizer = torch.optim.SGD(self.parameters(), lr = self.learning_rate, momentum=momentum, weight_decay=weight_decay)
 		elif opt == 'rmsprop':
-			optimizer = torch.optim.RMSprop(self.parameters(), self.learning_rate, weight_decay=weight_decay)		
+			optimizer = torch.optim.RMSprop(self.parameters(), self.learning_rate, weight_decay=weight_decay)
 		elif opt == 'adam':
 			optimizer = torch.optim.Adam(self.parameters(), self.learning_rate, weight_decay=weight_decay)
 		else:
@@ -80,9 +80,9 @@ class Net(nn.Module):
 
 		# Reset the gradients
 		optimizer.zero_grad()
-		
+
 		# Calculate the gradients
-		# self.cost.backward()
-		
+		self.cost.backward()
+
 		# Update parameters
 		optimizer.step()
