@@ -16,7 +16,7 @@ batch_sizes = [31, 3, 3]
 
 # Value of the epoch to save the model
 epoch_to_save = 5000
-path_to_save = 'mymodel'
+path_to_model = 'mymodel'
 
 # Only shuffle the data once
 if not os.path.exists('shuffled_' + file_name):
@@ -30,7 +30,9 @@ cost_train = []
 cost_val = []
 
 # Load the saved model
-# model_0.load_state_dict(torch.load(path_to_save))
+if os.path.exists(path_to_model):
+    print('Loading model: ' + path_to_model)
+    model_0.load_state_dict(torch.load(path_to_model))
 
 # Training
 for curr_ep in range(epoch_num):
@@ -41,7 +43,8 @@ for curr_ep in range(epoch_num):
 
     # Save the model at the specified epoch
     if curr_ep == epoch_to_save:
-        torch.save(model_0.state_dict(), path_to_save)
+        print('Saving model: ' + path_to_model)
+        torch.save(model_0.state_dict(), path_to_model)
 
     cost_train.append(model_0.cost)
 
