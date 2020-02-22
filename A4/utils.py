@@ -16,18 +16,15 @@ class Mine_Dataset(Dataset):
 
 		return self.data[index]
 
-def shuffle_dataset(): 
+def shuffle_dataset(file_name): 
 
-	ds = Mine_Dataset('sonar.csv')
+	ds = np.genfromtxt(file_name, delimiter = ',', dtype=str)
+	np.random.shuffle(ds)
+	np.savetxt('shuffle_' + file_name, ds, delimiter = ',', fmt='%s')
 
-	shuffled =  DataLoader(ds, batch_size = ds.__len__(), shuffle = True)
-	
-	for __, j in enumerate(shuffled):
-		np.savetxt('shuffeld_sonar.csv', j, delimiter = ',')
+def load_shuffled_dataset(file_name, batch_size_arr):
 
-def load_shuffled_dataset(batch_size_arr):
-
-	ds = Mine_Dataset('shuffeld_sonar.csv')
+	ds = Mine_Dataset(file_name)
 
 	train_set_len = int(ds.__len__() * 0.6) 
 	val_set_len = int(ds.__len__() * 0.2)
