@@ -22,5 +22,6 @@ for curr_ep in range(epoch_num):
         # print(batch[:,:60])
 
     print('Epoch number: ', curr_ep)
+ 
 
     # print('Cost function with SGD optimizer: {:.4E}'.format(model_0.cost.item()))

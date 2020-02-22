@@ -6,8 +6,8 @@ class Mine_Dataset(Dataset):
 
 	def __init__(self, file_name):
 
-		self.data = torch.from_numpy(np.genfromtxt(file_name, converters = {60: lambda x: x == b'M' and 1.0 or 0.0}, delimiter = ','))
-
+		self.data = np.float32(np.genfromtxt(file_name, converters = {60: lambda x: x == b'M' and 1.0 or 0.0}, delimiter = ','))
+		self.data = torch.from_numpy(self.data)
 	def __len__(self):
 
 		return len(self.data)
