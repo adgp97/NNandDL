@@ -12,7 +12,8 @@ class Net(nn.Module):
 # 		- first column represents the number of inputs
 # 		- second column represents the number of outputs
 # 		- third column represents the activation function. None, sigmo, tanh, relu, leakyrelu
-# 		- fourth column represents the negative slope when leaky ReLU is selected
+# 		- fourth column represents the negative slope when leaky ReLU is selected. If not selected, this value is ignored
+# 		- fifth column represents layer dropout probability
 
 	def __init__(self, layers, learning_rate):
 		"""
@@ -21,13 +22,14 @@ class Net(nn.Module):
 		super(Net, self).__init__()
 
 		self.learning_rate = learning_rate
-		# self.mode = mode
 		self.layers = nn.ModuleList()
 		self.act_funcs = nn.ModuleList()
+		self.drop = nn.ModuleList()
 
 		for i in range(layers.shape[0]):
 
 			self.layers.append(nn.Linear(int(layers[i][0]), int(layers[i][1])))
+			self.drop.append(nn.Dropout(float(layers[i][4])))
 
 			if layers[i][2] == None:
 				self.act_funcs.append(None)	# No act func
@@ -37,7 +39,7 @@ class Net(nn.Module):
 				self.act_funcs.append(nn.Tanh())
 			elif layers[i][2] == 'relu':
 				self.act_funcs.append(nn.ReLU())
-			elif (layers[i][2] == 'leakyrelu') and (len(layers[i]) == 4):
+			elif (layers[i][2] == 'leakyrelu'):
 				self.act_funcs.append(nn.LeakyReLU(layers[i][3]))
 			else:
 				print("Activation function not defined. Aborting...")
@@ -52,11 +54,12 @@ class Net(nn.Module):
 		for i in range(len(self.layers)):
 
 			try:
-				self.output = self.act_funcs[i](self.layers[i](self.output))
+				self.output = self.drop[i](self.act_funcs[i](self.layers[i](self.output)))
 
 			except TypeError:
 				# This should happen when activation function is set to None
-				self.output = self.layers[i](self.output)
+				self.output = self.drop[i](self.layers[i](self.output))
+
 
 		if torch.is_tensor(check_data):
 			loss_fn = nn.BCELoss()
