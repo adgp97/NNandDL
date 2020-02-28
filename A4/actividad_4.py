@@ -11,18 +11,18 @@ file_name = 'sonar.csv'
 
 epoch_num = 5000
 learning_rate = 0.00005
-layers_drop = np.asarray([[60,  80,  'relu', 0, 0.5], 
-					      [80, 100,  'relu', 0, 0.5], 
-					      [100, 80,  'relu', 0, 0.5], 
-					      [80,  60,  'relu', 0, 0.5], 
-					      [60,  40,  'relu', 0, 0.5], 
-					      [40,   1, 'sigmo', 0 ,  0]])
-layers_no_drop = np.asarray([[60,  80,  'relu', 0, 0], 
-					      	 [80, 100,  'relu', 0, 0], 
-					      	 [100, 80,  'relu', 0, 0], 
-					      	 [80,  60,  'relu', 0, 0], 
-					      	 [60,  40,  'relu', 0, 0], 
-					      	 [40,   1, 'sigmo', 0, 0]])
+layers_drop = np.asarray([[60,  100,  'relu', 0, 0.5], 
+					      [100, 100,  'relu', 0, 0.5], 
+					      [100, 100,  'relu', 0, 0.5], 
+					      [100, 100,  'relu', 0, 0.5], 
+					      [100, 100,  'relu', 0, 0.5], 
+					      [100,   1, 'sigmo', 0,  0]])
+layers_no_drop = np.asarray([[60,  100,  'relu', 0, 0], 
+					      	 [100, 100,  'relu', 0, 0], 
+					      	 [100, 100,  'relu', 0, 0], 
+					      	 [100, 100,  'relu', 0, 0], 
+					      	 [100, 100,  'relu', 0, 0], 
+					      	 [100,   1, 'sigmo', 0, 0]])
 
 # Cost function initialization
 cost_acc_drop = 0
@@ -270,30 +270,36 @@ model_no_drop.load_state_dict(torch.load('model_no_drop'))
 model_no_drop.eval()
 
 # Reloading datasets bc now train must be a single batch
-train, val, test = utils.load_shuffled_dataset('shuffled_' + file_name, batch_size = 124)
+train, val, test = utils.load_shuffled_dataset('shuffled_' + file_name, 124)
 
 for __, batch in enumerate(train):
 	print('TRAINING SET')
 	print("Confussion matrix of model with dropout")
 	model_drop.forward(batch[:,:60], batch[:,60])
+	model_drop.calc_metrics(batch[:,60])
 	model_drop.print_metrics()
 	print("Confussion matrix of model without dropout")
 	model_no_drop.forward(batch[:,:60], batch[:,60])
+	model_no_drop.calc_metrics(batch[:,60])
 	model_no_drop.print_metrics()
 
 print('VALIDATION SET')
 print("Confussion matrix of model with dropout")
 model_drop.forward(val[:,:60], val[:,60])
+model_drop.calc_metrics(val[:,60])
 model_drop.print_metrics()
 print("Confussion matrix of model without dropout")
 model_no_drop.forward(val[:,:60], val[:,60])
+model_no_drop.calc_metrics(val[:,60])
 model_no_drop.print_metrics()
 
 
 print('TEST SET')
 print("Confussion matrix of model with dropout")
 model_drop.forward(test[:,:60], test[:,60])
+model_drop.calc_metrics(test[:,60])
 model_drop.print_metrics()
 print("Confussion matrix of model without dropout")
 model_no_drop.forward(test[:,:60], test[:,60])
+model_no_drop.calc_metrics(test[:,60])
 model_no_drop.print_metrics()

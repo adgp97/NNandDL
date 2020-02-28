@@ -120,5 +120,5 @@ class Net(nn.Module):
 
 	def print_metrics(self):
 
-		print('TPs: {:^3} FPs: {:^3} FNs: {:^3} TNs: {:^3}\n'.format(self.TP, self.FP, self.FN, self.TN), end = ' | ')
+		print('TPs: {:^3} FPs: {:^3} FNs: {:^3} TNs: {:^3}\n'.format(self.TP, self.FP, self.FN, self.TN))
 		# print('Exactitud: {:.2E}. self.precision: {:.2E}. self.recall: {:.2E}. F1: {:.2E}'.format(self.accuracy, self.precision, self.recall, self.F1))
