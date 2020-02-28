@@ -22,7 +22,7 @@ def shuffle_dataset(file_name):
 	np.random.shuffle(ds)
 	np.savetxt('shuffled_' + file_name, ds, delimiter = ',', fmt='%s')
 
-def load_shuffled_dataset(file_name, batch_size_arr):
+def load_shuffled_dataset(file_name, batch_size):
 
 	ds = Mine_Dataset(file_name)
 
@@ -30,9 +30,7 @@ def load_shuffled_dataset(file_name, batch_size_arr):
 	val_set_len = int(ds.__len__() * 0.2)
 	test_set_len = ds.__len__() - train_set_len - val_set_len
 
-	train_set = DataLoader(ds[0:train_set_len], batch_size = batch_size_arr[0], shuffle = False)
-	# val_set = DataLoader(ds[train_set_len : train_set_len + val_set_len], batch_size = batch_size_arr[1], shuffle = False)
-	# test_set = DataLoader(ds[train_set_len + val_set_len:], batch_size = batch_size_arr[2], shuffle = False)
+	train_set = DataLoader(ds[0:train_set_len], batch_size = batch_size, shuffle = False)
 	val_set = ds[train_set_len : train_set_len + val_set_len]
 	test_set = ds[train_set_len + val_set_len:]
 	

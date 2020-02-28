@@ -91,7 +91,7 @@ class Net(nn.Module):
 		# Update parameters
 		optimizer.step()
 
-	def print_metrics(self, check_data):
+	def calc_metrics(self, check_data):
 		"""
 		Metrics calculation and printing
 		"""
@@ -100,23 +100,25 @@ class Net(nn.Module):
 		check_data_TF = torch.where(check_data > 0, ones_tensor, zeros_tensor)[1,:].view(len(check_data),1)
 		check_data_TF_neg = torch.where(check_data > 0, zeros_tensor, ones_tensor)[1,:].view(len(check_data),1)
 
-		TP = torch.where(self.output >= 0.5, self.output, zeros_tensor) * check_data_TF
-		TP = len(TP[TP > 0])
+		self.TP = torch.where(self.output >= 0.5, self.output, zeros_tensor) * check_data_TF
+		self.TP = len(self.TP[self.TP > 0])
 
-		FP = torch.where(self.output >= 0.5, self.output, zeros_tensor) * check_data_TF_neg
-		FP = len(FP[FP > 0])
+		self.FP = torch.where(self.output >= 0.5, self.output, zeros_tensor) * check_data_TF_neg
+		self.FP = len(self.FP[self.FP > 0])
 
-		TN = torch.where(self.output < 0.5, self.output, zeros_tensor) * check_data_TF_neg
-		TN = len(TN[TN > 0])
+		self.TN = torch.where(self.output < 0.5, self.output, zeros_tensor) * check_data_TF_neg
+		self.TN = len(self.TN[self.TN > 0])
 
-		FN = torch.where(self.output < 0.5, self.output, zeros_tensor) * check_data_TF
-		FN = len(FN[FN > 0])
+		self.FN = torch.where(self.output < 0.5, self.output, zeros_tensor) * check_data_TF
+		self.FN = len(self.FN[self.FN > 0])
 
-		print('M: {} | TPs: {:^3} FPs: {:^3} FNs: {:^3} TNs: {:^3}'.format(check_data.shape[0], TP, FP, FN, TN), end = ' | ')
+		# try:
+		self.accuracy = (self.TP + self.TN) / check_data_TF.shape[0]
+		self.precision = self.TP / (self.TP + self.TN)
+		self.recall = self.TP / (self.TP + self.FN)
+		# self.F1 = (2 * self.precision * self.recall) / (self.precision + self.recall)
 
-		accuracy = (TP + TN) / check_data_TF.shape[0]
-		precision = TP / (TP + TN)
-		recall = TP / (TP + FN)
-		F1 = (2 * precision * recall) / (precision + recall)
+	def print_metrics(self):
 
-		print('Exactitud: {:.2E}. Precision: {:.2E}. Recall: {:.2E}. F1: {:.2E}'.format(accuracy, precision, recall, F1))
+		print('TPs: {:^3} FPs: {:^3} FNs: {:^3} TNs: {:^3}\n'.format(self.TP, self.FP, self.FN, self.TN), end = ' | ')
+		# print('Exactitud: {:.2E}. self.precision: {:.2E}. self.recall: {:.2E}. F1: {:.2E}'.format(self.accuracy, self.precision, self.recall, self.F1))
