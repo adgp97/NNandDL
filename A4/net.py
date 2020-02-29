@@ -62,7 +62,7 @@ class Net(nn.Module):
 
 
 		if torch.is_tensor(check_data):
-			loss_fn = nn.BCELoss()
+			loss_fn = nn.MSELoss()
 			self.cost = loss_fn(self.output, check_data.view(len(check_data),1))
 
 

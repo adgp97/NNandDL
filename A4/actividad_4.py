@@ -9,20 +9,10 @@ import os.path
 
 file_name = 'sonar.csv'
 
-epoch_num = 5000
-learning_rate = 0.00005
-layers_drop = np.asarray([[60,  100,  'relu', 0, 0.5], 
-					      [100, 100,  'relu', 0, 0.5], 
-					      [100, 100,  'relu', 0, 0.5], 
-					      [100, 100,  'relu', 0, 0.5], 
-					      [100, 100,  'relu', 0, 0.5], 
-					      [100,   1, 'sigmo', 0,  0]])
-layers_no_drop = np.asarray([[60,  100,  'relu', 0, 0], 
-					      	 [100, 100,  'relu', 0, 0], 
-					      	 [100, 100,  'relu', 0, 0], 
-					      	 [100, 100,  'relu', 0, 0], 
-					      	 [100, 100,  'relu', 0, 0], 
-					      	 [100,   1, 'sigmo', 0, 0]])
+epoch_num = 500
+learning_rate = 0.008
+layers_drop = np.asarray([[60, 25, 'relu', 0, 0.2], [25, 1, 'sigmo', 0, 0.2]])
+layers_no_drop = np.asarray([[60, 25, 'relu', 0, 0], [25, 1, 'sigmo', 0, 0]])
 
 # Cost function initialization
 cost_acc_drop = 0
@@ -41,8 +31,8 @@ acc_no_drop = []
 # Best metrics (metric values when the model is saved)
 recall_drop_saved = 0
 recall_no_drop_saved = 0
-acc_drop_saved = 0.8		# Initialized high to obtain better results
-acc_no_drop_saved = 0.8		# IDEM
+acc_drop_saved = 0.7		# Initialized high to obtain better results
+acc_no_drop_saved = 0.7		# IDEM
 cost_val_min_drop = 100
 cost_val_min_no_drop = 100 
 
@@ -146,7 +136,7 @@ for curr_ep in range(epoch_num):
 		mark_no_drop_saved = curr_ep	# Mark the epoch the model was saved on
 
 	print('Epoch: ', curr_ep)
-	print('Case dropout. Cost train: {:.4E} | Cost validation: {:.4E} | Accuracy: {:.4E} | Recall: {:.4E}'.format(cost_train_drop[curr_ep], cost_val_drop[curr_ep],model_drop.accuracy, model_drop.recall))
+	print('Case dropout.    Cost train: {:.4E} | Cost validation: {:.4E} | Accuracy: {:.4E} | Recall: {:.4E}'.format(cost_train_drop[curr_ep], cost_val_drop[curr_ep],model_drop.accuracy, model_drop.recall))
 	# model_drop.print_metrics()
 	print('Case no dropout. Cost train: {:.4E} | Cost validation: {:.4E} | Accuracy: {:.4E} | Recall: {:.4E}'.format(cost_train_no_drop[curr_ep], cost_val_no_drop[curr_ep], model_no_drop.accuracy, model_no_drop.recall))
 	# model_no_drop.print_metrics()
