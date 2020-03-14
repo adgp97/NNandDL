@@ -3,11 +3,14 @@ import glob
 import os.path
 import shutil
 import sys
+from torchvision import transforms
 
 folder = 'GTSRB'
 filenamezip = 'GTSRB.zip'
 tra_img_dirs = 'Final_Training/Images'
 val_img_dirs = 'Final_Validation/Images'
+
+dim_img = (64,64)
 
 def extract_data(filename=filenamezip, folder=folder):
     if not os.path.exists(folder):
@@ -37,6 +40,10 @@ def init_data(folder = 'GTSRB'):
             val_files_dest = file.replace(folder + '\\' + os.path.dirname(tra_img_dirs), folder + '\\' + os.path.dirname(val_img_dirs))
             shutil.move(file, val_files_dest)
 
+transform_resize = transforms.Compose([
+    transforms.Resize(dim_img),
+    transforms.ToTensor(),
+])
 
 if __name__ == '__main__':
     extract_data()
