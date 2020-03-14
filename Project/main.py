@@ -10,7 +10,7 @@ valid_folder = folder + '/Final_Validation/Images'
 
 # Parameters
 learning_rate = 0.001
-batch_size = 1
+batch_size = 64
 layers = np.asarray([[64, 25, 'relu', 0, 0], [25, 42, 'sigmo', 0, 0]])
 
 # Init the data
@@ -19,7 +19,7 @@ init_data()
 
 # Create the DataLoaders
 train_loader = DataLoader(datasets.ImageFolder(train_folder, transform=transform_resize), batch_size=batch_size, shuffle=True)
-valid_loader = DataLoader(datasets.ImageFolder(valid_folder, transform=transform_resize), batch_size=batch_size, shuffle=True)
+valid_loader = DataLoader(datasets.ImageFolder(valid_folder, transform=transform_resize), batch_size=batch_size)
 
 model = Net(layers, learning_rate)
 
