@@ -115,3 +115,6 @@ dmypy.json
 # shuffled_*.csv
 model_drop
 model_no_drop
+
+# GTSRB Dataset
+GTSRB*
