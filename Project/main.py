@@ -26,19 +26,23 @@ cost_train = []
 
 for curr_ep in range(epoch_num):
 
+	print(curr_ep)
 	# Train
 	# Switching to training mode (dropout enabling)
 	model.train()
 	cost_acc = 0
 
 	for __, (data, target) in enumerate(train_loader):
+		
+		data.requires_grad = True
 
-		model.forward(data.view(batch_size, 4096), target)
+		model.forward(data.view(len(data), 4096), target)
+		
+		print(model.cost)
 
 		model.back_prop('adam', weight_decay = 0)
 
 		cost_acc += model.cost
-
 	
 	cost_train.append(cost_acc / len(train_loader))
 

@@ -25,7 +25,6 @@ class Net(nn.Module):
 		self.layers = nn.ModuleList()
 		self.act_funcs = nn.ModuleList()
 		self.drop = nn.ModuleList()
-		self.loss_fn = nn.CrossEntropyLoss()
 
 		for i in range(layers.shape[0]):
 
@@ -68,9 +67,10 @@ class Net(nn.Module):
 
 				except TypeError:
 					# This should happen when activation function is set to None
-				self.output = self.drop[i](self.layers[i](self.output))
+					self.output = self.drop[i](self.layers[i](self.output))
 
-		self.cost = slef.loss_fn(data, check_data.view(len(check_data),1))
+		loss_fn = nn.CrossEntropyLoss()
+		self.cost = loss_fn(data, check_data)
 
 		
 
