@@ -1,8 +1,9 @@
-from data import extract_data, init_data, transform_resize
+from data import transform_resize
 from net import Net
 from torch.utils.data import DataLoader
-from torchvision import datasets, transforms
+from torchvision import datasets
 import numpy as np
+import torch
 
 folder = 'GTSRB'
 train_folder = folder + '/Final_Training/Images' 
@@ -11,33 +12,35 @@ valid_folder = folder + '/Final_Validation/Images'
 # Parameters
 learning_rate = 0.001
 batch_size = 64
-layers = np.asarray([[64, 25, 'relu', 0, 0], [25, 42, 'sigmo', 0, 0]])
-
-# Init the data
-extract_data()
-init_data()
+cls_num = 43
+layers = np.asarray([[4096, 50, 'relu', 0, 0], [50, cls_num, 'softmax', 0, 0]])
+epoch_num = 500
 
 # Create the DataLoaders
 train_loader = DataLoader(datasets.ImageFolder(train_folder, transform=transform_resize), batch_size=batch_size, shuffle=True)
-valid_loader = DataLoader(datasets.ImageFolder(valid_folder, transform=transform_resize), batch_size=batch_size)
+# valid_loader = DataLoader(datasets.ImageFolder(valid_folder, transform=transform_resize), batch_size=batch_size)
 
 model = Net(layers, learning_rate)
 
-# Train
-# Switching to training mode (dropout enabling)
-model.train()
-for idx, (data, target) in enumerate(train_loader):
-    output = model(data)
-    model.eval_loss(output, target)
-    print(model.cost)
-    # model.back_prop('adam')     # Crashing Here
-    # print(data.shape)
-    # print('{:>4} | Size: {:>3}x{:<3} | ClassID: {}'.format(idx, data.shape[3], data.shape[2] ,target.item()))
+cost_train = []
 
+for curr_ep in range(epoch_num):
 
+	# Train
+	# Switching to training mode (dropout enabling)
+	model.train()
+	cost_acc = 0
 
-# Validation
-# Switching to evaluation mode (dropout disabling)
-model.eval()
-for idx, (data, target) in enumerate(valid_loader):
-    print('{:>4} | Size: {:>3}x{:<3} | ClassID: {}'.format(idx, data.shape[3], data.shape[2] ,target.item()))
+	for __, (data, target) in enumerate(train_loader):
+
+		model.forward(data.view(batch_size, 4096), target)
+
+		model.back_prop('adam', weight_decay = 0)
+
+		cost_acc += model.cost
+
+	
+	cost_train.append(cost_acc / len(train_loader))
+
+   
+

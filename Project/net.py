@@ -25,6 +25,7 @@ class Net(nn.Module):
 		self.layers = nn.ModuleList()
 		self.act_funcs = nn.ModuleList()
 		self.drop = nn.ModuleList()
+		self.loss_fn = nn.CrossEntropyLoss()
 
 		for i in range(layers.shape[0]):
 
@@ -39,34 +40,39 @@ class Net(nn.Module):
 				self.act_funcs.append(nn.Tanh())
 			elif layers[i][2] == 'relu':
 				self.act_funcs.append(nn.ReLU())
-			elif (layers[i][2] == 'leakyrelu'):
+			elif layers[i][2] == 'leakyrelu':
 				self.act_funcs.append(nn.LeakyReLU(layers[i][3]))
+			elif layers[i][2] == 'softmax':
+				self.act_funcs.append(nn.Softmax(dim=1))
 			else:
 				print("Activation function not defined. Aborting...")
 				sys.exit()
 
 
-	def forward(self, data):
+	def forward(self, data, check_data):
 		"""
 		Feed data to Network. Calculate the estimated output and Cost function
 		"""
 		self.output = data	# DO NOT ERRASE. Do not pay attentition to this
+
 		for i in range(len(self.layers)):
+			# if (i < len(self.layers) - 1) and
 
-			try:
-				self.output = self.drop[i](self.act_funcs[i](self.layers[i](self.output)))
-
-			except TypeError:
-				# This should happen when activation function is set to None
+			if (i == len(self.layers) - 1) and self.training:
+			 	# When the last layer is reacehd and if it is in traning mode, the activation function is not applied
 				self.output = self.drop[i](self.layers[i](self.output))
 
-			return self.output
+			else:
+				try:
+					self.output = self.drop[i](self.act_funcs[i](self.layers[i](self.output)))
 
-	def eval_loss(self, data, check_data):
-		if torch.is_tensor(check_data):
-			loss_fn = nn.MSELoss()
-			self.cost = loss_fn(data, check_data.view(len(check_data),1))
+				except TypeError:
+					# This should happen when activation function is set to None
+				self.output = self.drop[i](self.layers[i](self.output))
 
+		self.cost = slef.loss_fn(data, check_data.view(len(check_data),1))
+
+		
 
 	def back_prop(self, opt, momentum = 0, weight_decay=0):
 		"""
@@ -97,6 +103,7 @@ class Net(nn.Module):
 		"""
 		Metrics calculation and printing
 		"""
+		# TODO: update using scikit learn
 		ones_tensor = torch.ones(len(check_data), 1)
 		zeros_tensor = torch.zeros(len(check_data), 1)
 		check_data_TF = torch.where(check_data > 0, ones_tensor, zeros_tensor)[1,:].view(len(check_data),1)
