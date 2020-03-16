@@ -34,17 +34,30 @@ for curr_ep in range(epoch_num):
 
 	for __, (data, target) in enumerate(train_loader):
 		
+		model.eval()	# TEST
+
+
 		data.requires_grad = True
 
 		model.forward(data.view(len(data), 4096), target)
-		
-		print(model.cost)
+
+		# print(model.output)		# TEST
+		# print(target)		# TEST
 
 		model.back_prop('adam', weight_decay = 0)
 
 		cost_acc += model.cost
 	
+		model.calc_metrics(target)	# TEST
+		model.print_metrics()	# TEST
+		# break	# TEST
+
 	cost_train.append(cost_acc / len(train_loader))
 
+	break	# TEST
    
+model.eval()
 
+# FORWARD
+
+# calc_metrics

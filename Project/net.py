@@ -2,6 +2,7 @@ import torch.nn as nn
 import torch
 import sys
 import numpy as np
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 class Net(nn.Module):
 	"""
@@ -103,31 +104,14 @@ class Net(nn.Module):
 		"""
 		Metrics calculation and printing
 		"""
-		# TODO: update using scikit learn
-		ones_tensor = torch.ones(len(check_data), 1)
-		zeros_tensor = torch.zeros(len(check_data), 1)
-		check_data_TF = torch.where(check_data > 0, ones_tensor, zeros_tensor)[1,:].view(len(check_data),1)
-		check_data_TF_neg = torch.where(check_data > 0, zeros_tensor, ones_tensor)[1,:].view(len(check_data),1)
 
-		self.TP = torch.where(self.output >= 0.5, self.output, zeros_tensor) * check_data_TF
-		self.TP = len(self.TP[self.TP > 0])
+		self.prediction = torch.argmax(self.output, dim = 1)
 
-		self.FP = torch.where(self.output >= 0.5, self.output, zeros_tensor) * check_data_TF_neg
-		self.FP = len(self.FP[self.FP > 0])
+		self.accuracy = accuracy_score(check_data, self.prediction)
 
-		self.TN = torch.where(self.output < 0.5, self.output, zeros_tensor) * check_data_TF_neg
-		self.TN = len(self.TN[self.TN > 0])
-
-		self.FN = torch.where(self.output < 0.5, self.output, zeros_tensor) * check_data_TF
-		self.FN = len(self.FN[self.FN > 0])
-
-		# try:
-		self.accuracy = (self.TP + self.TN) / check_data_TF.shape[0]
-		self.precision = self.TP / (self.TP + self.TN)
-		self.recall = self.TP / (self.TP + self.FN)
-		# self.F1 = (2 * self.precision * self.recall) / (self.precision + self.recall)
-
+		self.precision, self.recall, self.F1, __ = precision_recall_fscore_support(check_data, self.prediction, average = 'micro')
+		
 	def print_metrics(self):
 
-		print('TPs: {:^3} FPs: {:^3} FNs: {:^3} TNs: {:^3}\n'.format(self.TP, self.FP, self.FN, self.TN))
-		# print('Exactitud: {:.2E}. self.precision: {:.2E}. self.recall: {:.2E}. F1: {:.2E}'.format(self.accuracy, self.precision, self.recall, self.F1))
+		# print('TPs: {:^3} FPs: {:^3} FNs: {:^3} TNs: {:^3}\n'.format(self.TP, self.FP, self.FN, self.TN))
+		print('Exactitud: {:.2E}. Precision: {:.2E}. Recall: {:.2E}. F1: {:.2E}'.format(self.accuracy, self.precision, self.recall, self.F1))
