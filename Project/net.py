@@ -1,7 +1,6 @@
 import torch.nn as nn
 import torch
 import sys
-import numpy as np
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 class Net(nn.Module):
@@ -26,6 +25,7 @@ class Net(nn.Module):
 		self.layers = nn.ModuleList()
 		self.act_funcs = nn.ModuleList()
 		self.drop = nn.ModuleList()
+		
 
 		for i in range(layers.shape[0]):
 
@@ -48,6 +48,8 @@ class Net(nn.Module):
 				print("Activation function not defined. Aborting...")
 				sys.exit()
 
+		self.optimizer = torch.optim.Adam(self.parameters(), self.learning_rate)#, weight_decay=weight_decay)
+		self.lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer = self.optimizer, step_size = 10, gamma = 0.1)
 
 	def forward(self, data, check_data):
 		"""
@@ -75,30 +77,19 @@ class Net(nn.Module):
 
 		
 
-	def back_prop(self, opt, momentum = 0, weight_decay=0):
+	def back_prop(self):
 		"""
 		Correction of weights and bias
 		"""
 
-		# Declare the optimizer
-		if   opt == 'sgd':
-			optimizer = torch.optim.SGD(self.parameters(), lr = self.learning_rate, momentum=momentum, weight_decay=weight_decay)
-		elif opt == 'rmsprop':
-			optimizer = torch.optim.RMSprop(self.parameters(), self.learning_rate, weight_decay=weight_decay)
-		elif opt == 'adam':
-			optimizer = torch.optim.Adam(self.parameters(), self.learning_rate, weight_decay=weight_decay)
-		else:
-			print('Optimizer not defined. Aborting...')
-			sys.exit()
-
 		# Reset the gradients
-		optimizer.zero_grad()
+		self.optimizer.zero_grad()
 
 		# Calculate the gradients
 		self.cost.backward()
 
 		# Update parameters
-		optimizer.step()
+		self.optimizer.step()
 
 	def calc_metrics(self, check_data):
 		"""

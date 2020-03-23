@@ -21,7 +21,7 @@ transform_resize = transforms.Compose([
 def extract_data(filename=filenamezip, folder=folder):
     if not os.path.exists(folder):
         if not os.path.exists(filename):
-            print('File ' + filename + ' is not founded')
+            print('File ' + filename + ' is not found')
             print('Aborting...')
             sys.exit(True)
 
