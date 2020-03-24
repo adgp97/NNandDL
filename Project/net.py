@@ -51,7 +51,7 @@ class Net(nn.Module):
 		self.optimizer = torch.optim.Adam(self.parameters(), self.learning_rate)#, weight_decay=weight_decay)
 		self.lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer = self.optimizer, step_size = 10, gamma = 0.1)
 
-	def forward(self, data, check_data):
+	def forward(self, data, check_data, weights):
 		"""
 		Feed data to Network. Calculate the estimated output and Cost function
 		"""
@@ -71,11 +71,11 @@ class Net(nn.Module):
 				except TypeError:
 					# This should happen when activation function is set to None
 					self.output = self.drop[i](self.layers[i](self.output))
-
-		loss_fn = nn.CrossEntropyLoss()
-		self.cost = loss_fn(data, check_data)
-
 		
+
+		loss_fn = nn.CrossEntropyLoss(weight = weights)
+		self.cost = loss_fn(self.output, check_data)
+
 
 	def back_prop(self):
 		"""
